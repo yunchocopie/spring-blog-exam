@@ -18,6 +18,15 @@ public class BoardRepository {
         Query query = em.createNativeQuery("select * from board_tb order by id desc", Board.class);
         return query.getResultList();
     }
+
+    public Board findById(int id) {
+        Query query = em.createNativeQuery("select * from board_tb where id = ?", Board.class);
+        query.setParameter(1, id);
+
+        Board board = (Board) query.getSingleResult();
+        return board;
+    }
+
     @Transactional // 디비에 인서트 하는 코드이기 때문에 붙여야 함
     public void save(BoardRequest.SaveDTO requestDTO) {
         Query query = em.createNativeQuery("insert into board_tb(author, title, content) values (?, ?, ?)");

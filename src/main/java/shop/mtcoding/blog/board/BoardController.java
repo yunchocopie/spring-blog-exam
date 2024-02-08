@@ -31,20 +31,49 @@ public class BoardController {
     }
 
     @PostMapping("/board/save") // 글쓰기 저장
-    public String save(BoardRequest.SaveDTO requestDTO){
+    public String save(BoardRequest.SaveDTO requestDTO, HttpServletRequest request){
+
+        if (requestDTO.getTitle().length() > 20) {
+            request.setAttribute("status", 400);
+            request.setAttribute("msg","title의 길이가 20자를 초과하면 안돼요.");
+            return "error/40x"; // BadRequest
+        }
+
+        if (requestDTO.getContent().length() > 20) {
+            request.setAttribute("status", 400);
+            request.setAttribute("msg","content의 길이가 20자를 초과하면 안돼요.");
+            return "error/40x"; // BadRequest
+        }
+
         boardRepository.save(requestDTO);
 
         return "redirect:/";
     }
 
     @GetMapping("/board/{id}/updateForm") // 글쓰기 수정
-    public String updateForm(@PathVariable int id) {
+    public String updateForm(@PathVariable int id, HttpServletRequest request) {
+
+        Board board = boardRepository.findById(id);
+        request.setAttribute("board", board);
 
         return "board/updateForm";
     }
 
     @PostMapping("/board/{id}/update") // 수정 완료
-    public String update(@PathVariable int id, BoardRequest.UpdateDTO requestDTO){
+    public String update(@PathVariable int id, BoardRequest.UpdateDTO requestDTO, HttpServletRequest request){
+
+        if (requestDTO.getTitle().length() > 20) {
+            request.setAttribute("status", 400);
+            request.setAttribute("msg","title의 길이가 20자를 초과하면 안돼요.");
+            return "error/40x"; // BadRequest
+        }
+
+        if (requestDTO.getContent().length() > 20) {
+            request.setAttribute("status", 400);
+            request.setAttribute("msg","content의 길이가 20자를 초과하면 안돼요.");
+            return "error/40x"; // BadRequest
+        }
+
         boardRepository.update(requestDTO, id);
 
         return "redirect:/";
