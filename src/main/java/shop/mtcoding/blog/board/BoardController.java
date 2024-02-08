@@ -17,9 +17,31 @@ public class BoardController {
     private final BoardRepository boardRepository;
 
     @GetMapping("/") // 홈 화면
-    public String index(HttpServletRequest request) {
-        List<Board> boardList = boardRepository.findAll();
+    public String index(HttpServletRequest request, @RequestParam(defaultValue = "0") int page) {
+        List<Board> boardList = boardRepository.findAll(page);
         request.setAttribute("boardList", boardList);
+
+        int currentPage = page;
+        int nextPage = currentPage + 1;
+        int prevPage = currentPage - 1;
+        request.setAttribute("nextPage", nextPage);
+        request.setAttribute("prevPage", prevPage);
+
+        // prevPage
+        boolean first = (currentPage == 0) ? true : false;
+        request.setAttribute("first", first);
+
+        // nextPage
+        int totalCount = boardRepository.findCount(); // 전체 개시물 수
+        int pagingCount = 5; // 페이지 당 표시할 게시물 수
+        int totalPage; // 게시물을 다 나타내려면 필요한 페이지 수
+        if (totalCount % pagingCount == 0) {
+            totalPage = totalCount / pagingCount;
+        } else {
+          totalPage = (totalCount / pagingCount) + 1;
+        }
+        boolean last = currentPage == (totalPage - 1) ? true : false;
+        request.setAttribute("last", last);
 
         return "index";
     }
