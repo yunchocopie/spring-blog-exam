@@ -20,6 +20,7 @@ public class BoardController {
     public String index(HttpServletRequest request) {
         List<Board> boardList = boardRepository.findAll();
         request.setAttribute("boardList", boardList);
+
         return "index";
     }
 
@@ -32,6 +33,7 @@ public class BoardController {
     @PostMapping("/board/save") // 글쓰기 저장
     public String save(BoardRequest.SaveDTO requestDTO){
         boardRepository.save(requestDTO);
+
         return "redirect:/";
     }
 
@@ -42,7 +44,8 @@ public class BoardController {
     }
 
     @PostMapping("/board/{id}/update") // 수정 완료
-    public String update(@PathVariable int id){
+    public String update(@PathVariable int id, BoardRequest.UpdateDTO requestDTO){
+        boardRepository.update(requestDTO, id);
 
         return "redirect:/";
     }
